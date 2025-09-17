@@ -10,7 +10,7 @@ OPENOCD=openocd
 OPENOCD_INTERFACE=picoprobe
 OPENOCD_OPTIONS=-f openocd-$(OPENOCD_INTERFACE).cfg
 
-BOOTSEL_FOLDER?=/run/media/$(USER)/RP2350
+BOOTSEL_FOLDER?=/mnt/d/
 
 KERNEL=$(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).elf
 KERNEL_WITH_APP=$(TOCK_ROOT_DIRECTORY)/target/$(TARGET)/release/$(PLATFORM)-app.elf
@@ -21,13 +21,15 @@ KERNEL_WITH_APP=$(TOCK_ROOT_DIRECTORY)/target/$(TARGET)/release/$(PLATFORM)-app.
 install: flash
 
 .PHONY: flash-openocd
-flash-openocd: $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).elf
-	$(OPENOCD) $(OPENOCD_OPTIONS) -c "adapter speed 5000" -c "program $<; verify_image $<;  reset; shutdown;"
+flash-openocd: $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM)-app.elf
+# 	$(OPENOCD) $(OPENOCD_OPTIONS) -c "adapter speed 5000" -c "program $<; verify_image $<;  reset; shutdown;"
+	openocd -f openocd.cfg -c "program $< verify reset"
 
 .PHONY: flash
 flash: $(KERNEL)
-	picotool uf2 convert $< $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).uf2
-	@if [ -d $(BOOTSEL_FOLDER) ]; then cp $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).uf2 "$(BOOTSEL_FOLDER)"; else echo; echo Please edit the BOOTSEL_FOLDER variable to point to you Raspberry Pi Pico 2 Flash Drive Folder; echo You can download and flash $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).uf2; fi
+# 	picotool uf2 convert $< $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).uf2
+# 	@if [ -d $(BOOTSEL_FOLDER) ]; then cp $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).uf2 "$(BOOTSEL_FOLDER)"; else echo; echo Please edit the BOOTSEL_FOLDER variable to point to you Raspberry Pi Pico 2 Flash Drive Folder; echo You can download and flash $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).uf2; fi
+	picotool load -u -v -x -t elf $(TOCK_ROOT_DIRECTORY)target/$(TARGET)/release/$(PLATFORM).elf
 
 .PHONY: program
 program: $(KERNEL)
