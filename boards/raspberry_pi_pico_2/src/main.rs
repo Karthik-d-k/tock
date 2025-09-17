@@ -355,7 +355,7 @@ pub unsafe fn main() {
 
     let led = LedsComponent::new().finalize(components::led_component_static!(
         LedHigh<'static, RPGpioPin<'static>>,
-        LedHigh::new(peripherals.pins.get_pin(RPGpio::GPIO25))
+        LedHigh::new(peripherals.pins.get_pin(RPGpio::GPIO22)) // use external GPIO, bcz Pico 2W on-board LED is connected to WL_GPIO0
     ));
 
     // Create the debugger object that handles calls to `debug!()`.

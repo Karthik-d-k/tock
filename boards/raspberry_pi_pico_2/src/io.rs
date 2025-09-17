@@ -82,16 +82,16 @@ impl IoWrite for Writer {
     }
 }
 
-/// Default panic handler for the Raspberry Pi Pico 2 board.
+/// Default panic handler for the Raspberry Pi Pico 2W board.
 ///
 /// We just use the standard default provided by the debug module in the kernel.
 #[cfg(not(test))]
 #[panic_handler]
 pub unsafe fn panic_fmt(pi: &PanicInfo) -> ! {
-    // LED is connected to GPIO 25
+    // LED is connected to GPIO 22
 
     use core::ptr::{addr_of, addr_of_mut};
-    let led_kernel_pin = &RPGpioPin::new(RPGpio::GPIO25);
+    let led_kernel_pin = &RPGpioPin::new(RPGpio::GPIO22);
     let led = &mut LedHigh::new(led_kernel_pin);
     let writer = &mut *addr_of_mut!(WRITER);
 
